@@ -1,0 +1,24 @@
+version: '3'
+services:
+    #Postgres database
+    postgres: 
+        image: 'postgres'
+        environment:
+            - POSTGRES_PASSWORD=postgres_password
+            - POSTGRES_DB=simple_blog_api
+    #API server
+    api:
+        depends_on: 
+            - postgres
+        build: 
+            context: ./
+            dockerfile: Dockerfile.prod
+        image: 'vasatr/complex_api'
+        environment:
+            - REDIS_HOST=postgres
+            - POSTGRES_PORT=5432
+            - POSGRES_USERNAME=postgres
+            - POSGRES_PASSWORD=postgres_password
+            - POSTGRES_DB=simple_blog_api
+        ports:
+            - "3000:3000"

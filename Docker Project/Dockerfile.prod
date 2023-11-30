@@ -1,0 +1,18 @@
+# Build Phase
+FROM node:18-alpine as builder
+WORKDIR /usr/app
+COPY ./package.json ./
+RUN npm install
+COPY ./ ./
+#convert all ts file to js file
+RUN npm run build 
+
+#Run Phase
+FROM node:18-alpine
+WORKDIR /usr/app
+COPY ./package.json ./
+RUN npm install
+#dist is the distribution file build during the build phase which we are copying into the run phase off working directory
+COPY --from=builder /usr/app/dist /usr/app/
+COPY ./ ./
+CMD ["node", "server.js"]
